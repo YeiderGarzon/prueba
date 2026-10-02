@@ -1,0 +1,38 @@
+<section class="panel auth-panel">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">{{ authMode === 'login' ? 'TU ESPACIO SEGURO' : 'ABRE TU CUENTA' }}</p>
+      <h2>{{ authMode === 'login' ? 'Inicia sesión' : 'Crea tu cuenta' }}</h2>
+    </div>
+    <span class="step-badge">ACCESO SEGURO</span>
+  </div>
+  <p class="muted">Ingresa con tu cuenta para solicitar un préstamo y consultar su estado.</p>
+  @if (error) {
+    <div class="message error" role="alert">{{ error }}</div>
+  }
+  <form (ngSubmit)="authenticate()">
+    @if (authMode === 'register') {
+      <label for="full-name">Nombre completo</label>
+      <input id="full-name" name="fullName" type="text" [(ngModel)]="fullName"
+        autocomplete="name" maxlength="120" placeholder="Tu nombre y apellidos" required />
+    }
+    <label for="username">Usuario</label>
+    <input id="username" name="username" type="text" [(ngModel)]="username"
+      autocomplete="username" minlength="3" maxlength="40" pattern="[a-zA-Z0-9._-]+"
+      placeholder="Tu nombre de usuario" required />
+    <label for="password">{{ authMode === 'register' ? 'Contraseña (mínimo 12 caracteres)' : 'Contraseña' }}</label>
+    <input id="password" name="password" type="password" [(ngModel)]="password"
+      [attr.autocomplete]="authMode === 'register' ? 'new-password' : 'current-password'"
+      [minlength]="authMode === 'register' ? 12 : 1" maxlength="72" required />
+    <button class="button primary submit-button" type="submit" [disabled]="authenticating">
+      {{ authenticating ? 'Un momento...' : authMode === 'login' ? 'Iniciar sesión' : 'Crear cuenta' }}
+      <span aria-hidden="true">→</span>
+    </button>
+  </form>
+  <p class="auth-switch">
+    {{ authMode === 'login' ? '¿Todavía no tienes cuenta?' : '¿Ya tienes una cuenta?' }}
+    <button type="button" (click)="setAuthMode(authMode === 'login' ? 'register' : 'login')">
+      {{ authMode === 'login' ? 'Regístrate' : 'Inicia sesión' }}
+    </button>
+  </p>
+</section>

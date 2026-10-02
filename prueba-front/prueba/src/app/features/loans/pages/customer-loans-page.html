@@ -1,0 +1,62 @@
+@if (error) {
+  <div class="message error" role="alert">{{ error }}</div>
+}
+@if (notice) {
+  <div class="message success" role="status">{{ notice }}</div>
+}
+
+<div class="content-grid">
+  <section class="panel application-panel">
+    <div class="section-heading">
+      <div><p class="eyebrow">NUEVA SOLICITUD</p><h2>Cuéntanos qué necesitas</h2></div>
+      <span class="step-badge">01 / 02</span>
+    </div>
+    <p class="muted">Completa los datos y nuestro equipo revisará tu solicitud.</p>
+    <form (ngSubmit)="submitApplication()">
+      <div class="field-row">
+        <div>
+          <label for="amount">Monto solicitado</label>
+          <div class="input-prefix"><span>$</span><input id="amount" name="amount" type="number"
+            [(ngModel)]="amount" placeholder="5.000.000" min="100" step="100" required /></div>
+        </div>
+        <div>
+          <label for="term">Plazo</label>
+          <div class="input-suffix"><input id="term" name="term" type="number"
+            [(ngModel)]="termMonths" placeholder="24" min="1" step="1" required /><span>meses</span></div>
+        </div>
+      </div>
+      <button class="button primary submit-button" type="submit" [disabled]="submitting">
+        {{ submitting ? 'Enviando solicitud...' : 'Enviar solicitud' }} <span aria-hidden="true">→</span>
+      </button>
+      <p class="form-note">La solicitud se registrará a nombre de {{ auth.currentUser()?.username }}.</p>
+    </form>
+  </section>
+
+  <section class="panel status-panel">
+    <div class="section-heading">
+      <div><p class="eyebrow">TU ACTIVIDAD</p><h2>Estado de solicitudes</h2></div>
+      <span class="count">{{ loans.length }}</span>
+    </div>
+    @if (loading) {
+      <div class="empty-state">Cargando solicitudes...</div>
+    } @else if (loans.length === 0) {
+      <div class="empty-state"><span class="empty-icon">↗</span><strong>Aún no hay solicitudes</strong>
+        <span>Cuando envíes una, podrás consultar aquí su avance.</span></div>
+    } @else {
+      <div class="loan-list">
+        @for (loan of loans; track loan.id) {
+          <article class="loan-card">
+            <div class="loan-card-top"><span class="loan-number">SOLICITUD #{{ loan.id }}</span>
+              <span class="badge" [class.pending]="loan.status === 'PENDING'"
+                [class.approved]="loan.status === 'APPROVED'" [class.rejected]="loan.status === 'REJECTED'">
+                {{ statusLabel(loan.status) }}
+              </span>
+            </div>
+            <strong class="loan-amount">{{ formatAmount(loan.amount) }}</strong>
+            <div class="loan-meta"><span>{{ loan.termMonths }} meses</span><span>{{ formatDate(loan.createdAt) }}</span></div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</div>

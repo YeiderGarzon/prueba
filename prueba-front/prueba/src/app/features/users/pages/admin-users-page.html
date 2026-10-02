@@ -1,0 +1,61 @@
+@if (error) { <div class="message error" role="alert">{{ error }}</div> }
+@if (notice) { <div class="message success" role="status">{{ notice }}</div> }
+
+<section class="panel admin-panel">
+  <div class="section-heading">
+    <div><p class="eyebrow">CENTRO DE OPERACIONES</p><h2>Gestión de usuarios</h2></div>
+    <span class="count">{{ users.length }}</span>
+  </div>
+  <p class="muted">Edita el nombre completo, el usuario de acceso, el rol y, si hace falta, establece una nueva contraseña.</p>
+  @if (loading) {
+    <div class="empty-state">Cargando usuarios...</div>
+  } @else if (users.length === 0) {
+    <div class="empty-state">No hay usuarios registrados.</div>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nombre completo</th><th>Usuario</th><th>Rol</th><th>Acción</th></tr></thead>
+        <tbody>
+          @for (user of users; track user.id) {
+            <tr>
+              <td><strong>{{ user.fullName }}</strong><small>Cuenta #{{ user.id }}</small></td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.role === 'ADMIN' ? 'Administrador' : 'Cliente' }}</td>
+              <td><button class="button secondary" type="button" (click)="edit(user)">Editar</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if (selected; as user) {
+  <section class="panel user-edit-panel" aria-labelledby="edit-user-title">
+    <div class="section-heading">
+      <div><p class="eyebrow">CUENTA #{{ user.id }}</p><h2 id="edit-user-title">Editar usuario</h2></div>
+    </div>
+    <form (ngSubmit)="save()">
+      <label for="admin-full-name">Nombre completo</label>
+      <input id="admin-full-name" name="fullName" type="text" [(ngModel)]="fullName"
+        maxlength="120" autocomplete="name" required />
+      <label for="admin-username">Nombre de usuario</label>
+      <input id="admin-username" name="username" type="text" [(ngModel)]="username"
+        minlength="3" maxlength="40" pattern="[a-zA-Z0-9._-]+" required />
+      <label for="admin-role">Rol</label>
+      <select id="admin-role" name="role" [(ngModel)]="role">
+        <option value="CUSTOMER">Cliente</option>
+        <option value="ADMIN">Administrador</option>
+      </select>
+      <label for="admin-password">Nueva contraseña <span class="muted">(opcional)</span></label>
+      <input id="admin-password" name="password" type="password" [(ngModel)]="password"
+        minlength="12" maxlength="72" autocomplete="new-password" placeholder="Deja vacío para conservarla" />
+      <div class="actions form-actions">
+        <button class="button primary" type="submit" [disabled]="saving">
+          {{ saving ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+        <button class="button secondary" type="button" [disabled]="saving" (click)="cancel()">Cancelar</button>
+      </div>
+    </form>
+  </section>
+}

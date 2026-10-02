@@ -1,0 +1,28 @@
+<section class="panel profile-panel">
+  <div class="section-heading">
+    <div><p class="eyebrow">TU CUENTA</p><h2>Mi perfil</h2></div>
+    <span class="step-badge">{{ auth.currentUser()?.role === 'ADMIN' ? 'ADMINISTRADOR' : 'CLIENTE' }}</span>
+  </div>
+  <p class="muted">Tu nombre completo y tu usuario son datos diferentes. Puedes modificarlos de forma independiente.</p>
+  @if (error) { <div class="message error" role="alert">{{ error }}</div> }
+  @if (notice) { <div class="message success" role="status">{{ notice }}</div> }
+  @if (loading) {
+    <div class="empty-state">Cargando perfil...</div>
+  } @else {
+    <form (ngSubmit)="save()">
+      <label for="profile-full-name">Nombre completo</label>
+      <input id="profile-full-name" name="fullName" type="text" [(ngModel)]="fullName"
+        maxlength="120" autocomplete="name" required />
+      <label for="profile-username">Nombre de usuario</label>
+      <input id="profile-username" name="username" type="text" [(ngModel)]="username"
+        minlength="3" maxlength="40" pattern="[a-zA-Z0-9._-]+" autocomplete="username" required />
+      <label for="profile-password">Nueva contraseña <span class="muted">(opcional)</span></label>
+      <input id="profile-password" name="password" type="password" [(ngModel)]="password"
+        minlength="12" maxlength="72" autocomplete="new-password" placeholder="Deja vacío para conservarla" />
+      <p class="form-note">Si cambias tu nombre de usuario, tendrás que iniciar sesión otra vez.</p>
+      <button class="button primary submit-button" type="submit" [disabled]="saving">
+        {{ saving ? 'Guardando...' : 'Guardar cambios' }} <span aria-hidden="true">→</span>
+      </button>
+    </form>
+  }
+</section>

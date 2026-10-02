@@ -1,0 +1,46 @@
+@if (error) {
+  <div class="message error" role="alert">{{ error }}</div>
+}
+@if (notice) {
+  <div class="message success" role="status">{{ notice }}</div>
+}
+
+<section class="panel admin-panel">
+  <div class="section-heading">
+    <div><p class="eyebrow">CENTRO DE OPERACIONES</p><h2>Gestión de solicitudes</h2></div>
+    <span class="count">{{ loans.length }}</span>
+  </div>
+  <p class="muted">Revisa las solicitudes y registra una decisión para cada préstamo pendiente.</p>
+  @if (loading) {
+    <div class="empty-state">Cargando solicitudes...</div>
+  } @else if (loans.length === 0) {
+    <div class="empty-state">Todavía no hay solicitudes para revisar.</div>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Solicitante</th><th>Monto</th><th>Plazo</th><th>Fecha</th><th>Estado</th><th>Decisión</th></tr></thead>
+        <tbody>
+          @for (loan of loans; track loan.id) {
+            <tr>
+              <td><strong>{{ loan.applicantFullName }}</strong><small>{{ loan.applicantUsername }} · Solicitud #{{ loan.id }}</small></td>
+              <td>{{ formatAmount(loan.amount) }}</td>
+              <td>{{ loan.termMonths }} meses</td>
+              <td>{{ formatDate(loan.createdAt) }}</td>
+              <td><span class="badge" [class.pending]="loan.status === 'PENDING'"
+                [class.approved]="loan.status === 'APPROVED'" [class.rejected]="loan.status === 'REJECTED'">
+                {{ statusLabel(loan.status) }}</span></td>
+              <td>
+                @if (loan.status === 'PENDING') {
+                  <div class="actions">
+                    <button class="button approve" type="button" (click)="decide(loan, 'APPROVED')">Aprobar</button>
+                    <button class="button reject" type="button" (click)="decide(loan, 'REJECTED')">Rechazar</button>
+                  </div>
+                } @else { <span class="muted">Resuelta</span> }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
