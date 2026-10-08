@@ -119,3 +119,7 @@ npm.cmd test -- --watch=false
 ```
 
 Esta aplicación es una simulación educativa, no un sistema bancario listo para producción. Antes de desplegarla se requieren, entre otros controles, HTTPS, gestión segura de secretos, protección contra fuerza bruta, políticas de contraseñas y revisión de seguridad.
+
+Credencial de admin de prueba:
+Username: admin
+password: adminadminadmin
